@@ -4,10 +4,12 @@ let tweets = [
   {
     id:"1",
     text:"first one",
+    userId:"2",
   },
   {
     id:"2",
     text:"seconde one",
+    userId:"1",
   }
 ];
 
@@ -30,6 +32,9 @@ const typeDefs = gql`
         lastName: String!
         fullName: String!
       }
+"""
+ Tweet object represents a resource for a Tweet
+"""
     type Tweet {
       id:ID!
       text:String!
@@ -63,6 +68,7 @@ const resolvers = {
       const newTweet = {
         id:tweets.length +1,
         text,
+        userId
       };
       tweets.push(newTweet);
       return newTweet;
@@ -75,8 +81,18 @@ const resolvers = {
     }
   },
   User: {
+    firstName({firstName}){
+      return "firstName";
+    },
     fullName({firstName,lastName}) {
       return `${firstName} ${lastName}`;
+    }
+  },
+  Tweet:{
+    author({userId}){
+      if(!users.find(userId))
+        throw new Error("Id가 존재하지 않습니다.");
+      return users.find(user => user.id === userId);
     }
   }
 }
